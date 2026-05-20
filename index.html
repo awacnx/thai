@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เกมภาษาไทย ป.4–6</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Mitr:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #0d1b2a;
+  --card: #152235;
+  --card2: #1c2f45;
+  --gold: #f5c842;
+  --teal: #34d4c8;
+  --coral: #ff6b6b;
+  --green: #52e07c;
+  --purple: #b794f4;
+  --blue: #60a5fa;
+  --text: #e2eaf6;
+  --muted: #7a93ad;
+  --border: #243650;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(52,212,200,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 80%, rgba(245,200,66,0.06) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 20px 14px 80px;
+}
+
+/* ── Header ── */
+header { text-align: center; padding: 22px 0 16px; }
+
+.klass-badge {
+  display: inline-flex; gap: 6px; margin-bottom: 10px;
+}
+.klass-badge span {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--teal);
+  padding: 3px 11px;
+  letter-spacing: 1px;
+}
+
+h1 {
+  font-family: 'Mitr', sans-serif;
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  font-weight: 700;
+  background: linear-gradient(130deg, var(--gold) 0%, var(--teal) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 5px;
+}
+
+.sub { color: var(--muted); font-size: 0.9rem; }
+
+/* ── Controls ── */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin: 16px 0;
+  align-items: center;
+}
+
+.ctrl-group {
+  display: flex; gap: 6px; flex-wrap: wrap; flex: 1;
+}
+
+.ctrl-btn {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  color: var(--muted);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.85rem;
+  padding: 7px 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.ctrl-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.08); font-weight: 700; }
+.ctrl-btn:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+
+.load-btn {
+  background: linear-gradient(135deg, var(--teal), #1faaa0);
+  border: none; border-radius: 10px;
+  color: #0d1b2a; font-family: 'Mitr', sans-serif;
+  font-size: 0.9rem; font-weight: 700;
+  padding: 9px 20px; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.load-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(52,212,200,0.3); }
+.load-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+/* ── Score bar ── */
+.score-bar {
+  display: flex; gap: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.sc {
+  flex: 1; text-align: center;
+  padding: 10px 8px;
+  border-right: 1px solid var(--border);
+}
+.sc:last-child { border-right: none; }
+.sc label { display: block; font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+.sc .val { font-family: 'Mitr', sans-serif; font-size: 1.25rem; font-weight: 700; }
+.sc.c .val { color: var(--green); }
+.sc.w .val { color: var(--coral); }
+.sc.t .val { color: var(--gold); }
+.sc.s .val { color: var(--purple); }
+
+/* ── Mode tabs ── */
+.tabs { display: flex; gap: 7px; margin-bottom: 14px; }
+.tab {
+  flex: 1; padding: 9px 6px; border: 1.5px solid var(--border);
+  border-radius: 10px; background: transparent;
+  color: var(--muted); font-family: 'Sarabun', sans-serif;
+  font-size: 0.85rem; cursor: pointer; transition: all 0.18s; text-align: center;
+}
+.tab.active { border-color: var(--purple); background: rgba(183,148,244,0.1); color: var(--purple); font-weight: 700; }
+.tab:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+
+/* ── Game card ── */
+.game-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 22px 22px;
+  min-height: 280px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s, opacity 0.25s, transform 0.25s;
+}
+.game-card.ok { border-color: var(--green); box-shadow: 0 0 22px rgba(82,224,124,0.18); }
+.game-card.no { border-color: var(--coral); box-shadow: 0 0 22px rgba(255,107,107,0.18); }
+
+.progress-pill {
+  position: absolute; top: 14px; right: 15px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 20px; font-size: 0.72rem;
+  color: var(--muted); padding: 3px 10px;
+}
+
+.cat-tag {
+  font-size: 0.7rem; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 10px; font-weight: 700;
+}
+
+.q-word {
+  font-family: 'Mitr', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-weight: 700; color: var(--gold);
+  margin-bottom: 8px; letter-spacing: 2px;
+  text-align: center; line-height: 1.3;
+}
+
+.q-hint {
+  font-size: 0.85rem; color: var(--muted);
+  text-align: center; margin-bottom: 18px;
+}
+
+/* choices */
+.choices {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 9px; width: 100%; max-width: 520px;
+}
+.ch {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 11px; color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.88rem; padding: 11px 13px;
+  cursor: pointer; transition: all 0.16s;
+  text-align: left; line-height: 1.45;
+}
+.ch:hover:not(:disabled) { border-color: var(--teal); background: rgba(52,212,200,0.07); transform: translateY(-1px); }
+.ch.ok { border-color: var(--green); background: rgba(82,224,124,0.13); color: var(--green); }
+.ch.no { border-color: var(--coral); background: rgba(255,107,107,0.13); color: var(--coral); }
+.ch.reveal { border-color: var(--green); background: rgba(82,224,124,0.08); color: var(--green); }
+.ch:disabled { cursor: default; }
+
+/* type area */
+.type-area { display: flex; flex-direction: column; gap: 9px; width: 100%; max-width: 460px; }
+.t-inp {
+  background: var(--card2); border: 1.5px solid var(--border);
+  border-radius: 11px; color: var(--text);
+  font-family: 'Mitr', sans-serif; font-size: 1.2rem;
+  padding: 13px 16px; text-align: center; outline: none;
+  transition: border-color 0.2s;
+}
+.t-inp:focus { border-color: var(--teal); }
+.t-inp.ok { border-color: var(--green); background: rgba(82,224,124,0.08); }
+.t-inp.no { border-color: var(--coral); background: rgba(255,107,107,0.08); }
+
+.sub-btn {
+  background: linear-gradient(135deg, var(--gold), #e0981a);
+  color: #0d1b2a; border: none; border-radius: 11px;
+  font-family: 'Mitr', sans-serif; font-size: 1rem;
+  font-weight: 700; padding: 13px; cursor: pointer;
+  transition: all 0.2s; letter-spacing: 1px;
+}
+.sub-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,200,66,0.3); }
+.sub-btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+/* syllable chips */
+.syl-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+.syl-chip {
+  background: rgba(183,148,244,0.1);
+  border: 1.5px solid var(--purple);
+  color: var(--purple);
+  border-radius: 8px; padding: 6px 14px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 1.1rem; font-weight: 600;
+}
+.plus { color: var(--muted); font-size: 1.1rem; display: flex; align-items: center; }
+
+/* feedback */
+.feedback {
+  height: 34px; display: flex; align-items: center;
+  justify-content: center; font-size: 0.92rem;
+  font-weight: 600; gap: 5px; margin: 6px 0;
+}
+.feedback.ok { color: var(--green); }
+.feedback.no { color: var(--coral); }
+
+/* next / action buttons */
+.next-btn {
+  display: block; margin: 2px auto 14px;
+  background: var(--card2); border: 1.5px solid var(--teal);
+  color: var(--teal); border-radius: 11px;
+  font-family: 'Mitr', sans-serif; font-size: 0.95rem;
+  font-weight: 700; padding: 11px 34px;
+  cursor: pointer; transition: all 0.18s; letter-spacing: 1px;
+}
+.next-btn:hover { background: rgba(52,212,200,0.1); transform: translateY(-1px); }
+
+/* loading spinner */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 12px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.load-msg { color: var(--muted); font-size: 0.9rem; text-align: center; margin-top: 8px; }
+
+/* streak badge */
+.streak-badge {
+  position: fixed; top: 14px; right: 14px;
+  background: var(--gold); color: #0d1b2a;
+  border-radius: 11px; padding: 6px 14px;
+  font-family: 'Mitr', sans-serif; font-size: 0.9rem; font-weight: 700;
+  z-index: 200; transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.streak-badge.show { transform: scale(1); }
+
+/* vocab bank panel */
+.bank-panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.bank-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.bank-title {
+  font-family: 'Mitr', sans-serif; font-size: 0.9rem;
+  font-weight: 700; color: var(--gold);
+}
+.bank-count {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 0.72rem; color: var(--teal);
+}
+.bank-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  max-height: 120px; overflow-y: auto;
+}
+.bank-chip {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 3px 10px;
+  font-size: 0.8rem; color: var(--text);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.bank-chip:hover { border-color: var(--coral); }
+.bank-chip.excluded { opacity: 0.35; text-decoration: line-through; }
+
+/* summary */
+.summary { text-align: center; padding: 28px 20px; }
+.sum-emoji { font-size: 3.5rem; margin-bottom: 14px; }
+.sum-title { font-family: 'Mitr', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+.sum-sub { color: var(--muted); margin-bottom: 20px; }
+.sum-score { font-family: 'Mitr', sans-serif; font-size: 3.2rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--teal));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 6px; }
+.restart-btn {
+  background: linear-gradient(135deg, var(--gold), #e0981a);
+  color: #0d1b2a; border: none; border-radius: 13px;
+  font-family: 'Mitr', sans-serif; font-size: 1rem;
+  font-weight: 700; padding: 13px 38px; cursor: pointer;
+  transition: all 0.2s; margin-top: 10px; letter-spacing: 1px;
+}
+.restart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(245,200,66,0.35); }
+
+/* grade selector */
+.grade-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.grade-btn {
+  padding: 5px 12px; border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--card2); color: var(--muted);
+  font-family: 'Sarabun', sans-serif; font-size: 0.82rem;
+  cursor: pointer; transition: all 0.15s;
+}
+.grade-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(96,165,250,0.1); font-weight: 700; }
+
+@media(max-width:480px) {
+  .choices { grid-template-columns: 1fr; }
+  .tabs { flex-wrap: wrap; }
+  .tab { font-size: 0.78rem; }
+  .ctrl-group { gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<div class="streak-badge" id="streakBadge">🔥 <span id="streakNum">0</span> ต่อเนื่อง!</div>
+
+<div class="wrap">
+  <header>
+    <div class="klass-badge">
+      <span>ป.4</span><span>ป.5</span><span>ป.6</span>
+    </div>
+    <h1>เกมภาษาไทย</h1>
+    <p class="sub">คลังคำศัพท์ AI · สะกดคำ · ความหมาย</p>
+  </header>
+
+  <!-- Grade + topic controls -->
+  <div class="controls">
+    <div style="width:100%">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px">ระดับชั้น</div>
+      <div class="grade-row" id="gradeRow">
+        <button class="grade-btn active" data-g="4" onclick="toggleGrade(this)">ป.4</button>
+        <button class="grade-btn active" data-g="5" onclick="toggleGrade(this)">ป.5</button>
+        <button class="grade-btn active" data-g="6" onclick="toggleGrade(this)">ป.6</button>
+      </div>
+    </div>
+    <div style="width:100%">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px">หมวดคำ</div>
+      <div class="ctrl-group" id="topicRow">
+        <button class="ctrl-btn active" data-t="all" onclick="setTopic(this)">ทั้งหมด</button>
+        <button class="ctrl-btn" data-t="vocab" onclick="setTopic(this)">📖 คำศัพท์</button>
+        <button class="ctrl-btn" data-t="poem" onclick="setTopic(this)">📜 บทกวี</button>
+        <button class="ctrl-btn" data-t="idiom" onclick="setTopic(this)">💬 สำนวน</button>
+        <button class="ctrl-btn" data-t="spell" onclick="setTopic(this)">🔤 สะกดคำ</button>
+      </div>
+    </div>
+    <button class="load-btn" id="loadBtn" onclick="loadVocab()">✨ โหลดคำศัพท์ใหม่</button>
+  </div>
+
+  <!-- Score -->
+  <div class="score-bar">
+    <div class="sc c"><label>ถูก</label><div class="val" id="sC">0</div></div>
+    <div class="sc w"><label>ผิด</label><div class="val" id="sW">0</div></div>
+    <div class="sc t"><label>รวม</label><div class="val" id="sT">0</div></div>
+    <div class="sc s"><label>🔥สตรีค</label><div class="val" id="sS">0</div></div>
+  </div>
+
+  <!-- Mode tabs -->
+  <div class="tabs">
+    <button class="tab active" id="tab-meaning" onclick="setMode('meaning')">📖 ความหมาย</button>
+    <button class="tab" id="tab-type" onclick="setMode('type')">✏️ พิมพ์คำ</button>
+    <button class="tab" id="tab-syl" onclick="setMode('syl')">🔤 พยางค์</button>
+  </div>
+
+  <!-- Vocab bank -->
+  <div class="bank-panel" id="bankPanel" style="display:none">
+    <div class="bank-header">
+      <div class="bank-title">📚 คลังคำศัพท์</div>
+      <div class="bank-count" id="bankCount">0 คำ</div>
+    </div>
+    <div class="bank-grid" id="bankGrid"></div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:8px">แตะคำเพื่อซ่อน/แสดง ในการเล่น</div>
+  </div>
+
+  <!-- Game card -->
+  <div class="game-card" id="gc">
+    <div class="progress-pill" id="pp">—</div>
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:2rem;margin-bottom:12px">📚</div>
+      <div style="color:var(--muted);font-size:0.95rem;margin-bottom:20px">กดปุ่ม <strong style="color:var(--teal)">โหลดคำศัพท์ใหม่</strong><br>เพื่อให้ AI สร้างคำศัพท์ให้</div>
+      <button class="load-btn" onclick="loadVocab()" style="margin:0 auto;display:block">✨ เริ่มโหลดคำศัพท์</button>
+    </div>
+  </div>
+
+  <div class="feedback" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()" style="display:none">ข้อต่อไป →</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let allVocab = [];          // full loaded bank
+let excluded = new Set();   // words user hid
+let questions = [];         // current shuffled queue
+let curIdx = 0;
+let mode = 'meaning';
+let answered = false;
+let sc = 0, sw = 0, streak = 0;
+let grades = new Set(['4','5','6']);
+let topic = 'all';
+let loading = false;
+
+// ══════════════════════════════════════════
+// BUILT-IN SEED VOCABULARY (from uploaded worksheets)
+// ══════════════════════════════════════════
+const seedVocab = [
+  // ป.4 worksheet (image 1)
+  {word:'พยากรณ์',meaning:'การคาดคะเน บอกกล่าวล่วงหน้า',grade:'4',type:'vocab'},
+  {word:'สาเหตุ',meaning:'ต้นเหตุที่ทำให้เกิดเรื่อง',grade:'4',type:'vocab'},
+  {word:'ปรากฏ',meaning:'แสดงออกมาให้เห็น เผยให้รู้',grade:'4',type:'vocab'},
+  {word:'เจตนารมณ์',meaning:'ความตั้งใจ มุ่งหมาย อุดมการณ์',grade:'4',type:'vocab'},
+  {word:'นิทรรศการ',meaning:'การนำผลงานมาจัดแสดงเป็นระบบ',grade:'4',type:'vocab'},
+  {word:'เศรษฐกิจ',meaning:'ระบบที่เกี่ยวกับการผลิตและการค้า',grade:'4',type:'vocab'},
+  {word:'กะพริบ',meaning:'หรี่และลืมตาเร็ว หรือกระพริบแสง',grade:'4',type:'vocab'},
+  {word:'พฤหัสบดี',meaning:'วันที่ห้าของสัปดาห์',grade:'4',type:'vocab'},
+  {word:'กระตือรือร้น',meaning:'มีความขยัน กระฉับกระเฉง ไม่ปล่อยปละ',grade:'4',type:'vocab'},
+  {word:'กระทะ',meaning:'ภาชนะสำหรับทอดหรือผัดอาหาร',grade:'4',type:'vocab'},
+  {word:'กะทัดรัด',meaning:'พอดี กะทัด ไม่ใหญ่โตเกินไป',grade:'4',type:'vocab'},
+  // บทกวีสังข์ทอง (image 3)
+  {word:'ฉาวฉาน',meaning:'เกรียวกราว ดังก้องไปทั่ว',grade:'4',type:'poem'},
+  {word:'ประสา',meaning:'ลักษณะที่เป็นไปตามปกติ',grade:'4',type:'poem'},
+  {word:'ผันผิน',meaning:'หันเปลี่ยน พลิกผัน',grade:'4',type:'poem'},
+  {word:'ผ่านเกล้า',meaning:'พระเจ้าแผ่นดิน (คำเคารพ)',grade:'4',type:'poem'},
+  {word:'สาละวน',meaning:'วุ่นอยู่กับเรื่องใดเรื่องหนึ่ง ไม่ว่าง',grade:'4',type:'poem'},
+  {word:'อาจิณ',meaning:'เป็นปกติ เสมอ เป็นประจำ',grade:'4',type:'poem'},
+  {word:'อุ้มชู',meaning:'ประคับประคอง เลี้ยงดูอย่างยกย่อง',grade:'4',type:'poem'},
+  // บทกวีวิชาเหมือนสินค้า (image 4)
+  {word:'โยธา',meaning:'ทหารราบ ทหารช่าง',grade:'4',type:'poem'},
+  {word:'หางเสือ',meaning:'อุปกรณ์ควบคุมทิศทางเรือ',grade:'4',type:'poem'},
+  {word:'สำเภา',meaning:'เรือใบขนาดใหญ่ใช้บรรทุกสินค้า',grade:'4',type:'poem'},
+  {word:'อัชฌาสัย',meaning:'มีนิสัยดี เอื้อเฟื้อ สุภาพ',grade:'4',type:'poem'},
+  {word:'พิสมัย',meaning:'ชอบพอ รัก หลงใหล',grade:'4',type:'poem'},
+  {word:'คร้าน',meaning:'เกียจคร้าน ไม่อยากทำ',grade:'4',type:'poem'},
+  // image 2 syllable words
+  {word:'กันดาน',meaning:'ที่แห้งแล้ง ขาดแคลน',grade:'4',type:'spell'},
+  {word:'สาสวน',meaning:'สวรรค์ ที่สงบร่มเย็น',grade:'4',type:'spell'},
+  {word:'ชะแง้',meaning:'โน้มตัวมองดู',grade:'4',type:'spell'},
+  {word:'ดวงเนตร',meaning:'ดวงตา (ภาษาสูง)',grade:'4',type:'spell'},
+  {word:'ทัศนา',meaning:'การดู การมอง',grade:'4',type:'spell'},
+  {word:'วรรณคดี',meaning:'งานประพันธ์ที่ดีมีคุณค่า',grade:'4',type:'spell'},
+  {word:'ฉอเลาะ',meaning:'พูดหว่านล้อม ประจบ',grade:'4',type:'spell'},
+];
+
+// ══════════════════════════════════════════
+// AI VOCAB LOADER
+// ══════════════════════════════════════════
+async function loadVocab() {
+  if (loading) return;
+  loading = true;
+  document.getElementById('loadBtn').disabled = true;
+  document.getElementById('loadBtn').textContent = '⏳ กำลังโหลด...';
+
+  const gradeList = [...grades].join(', ');
+  const topicMap = {
+    all: 'คำศัพท์ทั่วไป บทกวี สำนวน สุภาษิต คำที่มักสะกดผิด',
+    vocab: 'คำศัพท์ทั่วไปในชีวิตประจำวันและวิชาการ',
+    poem: 'คำในบทกวี วรรณคดี กลอน ฉันท์',
+    idiom: 'สำนวน สุภาษิต คำพังเพย',
+    spell: 'คำที่สะกดยาก คำที่มักเขียนผิด การันต์'
+  };
+  const topicDesc = topicMap[topic];
+
+  showLoadingCard();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `สร้างคำศัพท์ภาษาไทยสำหรับนักเรียนระดับชั้น ป.${gradeList} หมวด: ${topicDesc}
+
+ให้สร้าง 40 คำ ที่หลากหลายและเหมาะสมกับระดับชั้น ครอบคลุมคำในชีวิตประจำวัน วรรณคดี สำนวน และคำที่สะกดยาก
+
+ตอบเป็น JSON array เท่านั้น ไม่มีข้อความอื่น รูปแบบ:
+[
+  {"word":"คำศัพท์","meaning":"ความหมายสั้นๆ ชัดเจน","grade":"4","type":"vocab"},
+  ...
+]
+
+type ให้ใช้: vocab / poem / idiom / spell
+grade ให้ใช้ตัวเลข: 4, 5 หรือ 6 ตามความยากของคำ
+ความหมายให้สั้น ชัด ไม่เกิน 15 คำ`
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    // merge with seed, deduplicate by word
+    const wordSet = new Set(allVocab.map(v => v.word));
+    const newWords = parsed.filter(v => v.word && v.meaning && !wordSet.has(v.word));
+    allVocab = [...allVocab, ...newWords];
+
+    if (allVocab.length === 0) allVocab = [...seedVocab];
+
+    renderBank();
+    buildAndStart();
+  } catch (e) {
+    console.error(e);
+    // fallback to seed
+    if (allVocab.length === 0) allVocab = [...seedVocab];
+    renderBank();
+    buildAndStart();
+  }
+
+  loading = false;
+  document.getElementById('loadBtn').disabled = false;
+  document.getElementById('loadBtn').textContent = '✨ โหลดคำศัพท์ใหม่';
+}
+
+function showLoadingCard() {
+  const gc = document.getElementById('gc');
+  gc.innerHTML = `
+    <div class="progress-pill" id="pp">โหลด...</div>
+    <div style="text-align:center;padding:16px">
+      <div class="spinner"></div>
+      <div class="load-msg">AI กำลังสร้างคำศัพท์ ป.${[...grades].join('/')}...<br>
+      <span style="font-size:0.8rem;opacity:0.7">รอสักครู่นะคะ</span></div>
+    </div>
+  `;
+  document.getElementById('fb').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+// ══════════════════════════════════════════
+// BANK UI
+// ══════════════════════════════════════════
+function renderBank() {
+  const panel = document.getElementById('bankPanel');
+  const grid = document.getElementById('bankGrid');
+  panel.style.display = 'block';
+  grid.innerHTML = '';
+  const active = allVocab.filter(v => filterVocab(v));
+  document.getElementById('bankCount').textContent = active.length + ' คำ';
+  active.forEach(v => {
+    const chip = document.createElement('div');
+    chip.className = 'bank-chip' + (excluded.has(v.word) ? ' excluded' : '');
+    chip.textContent = v.word;
+    chip.title = v.meaning;
+    chip.onclick = () => {
+      if (excluded.has(v.word)) excluded.delete(v.word);
+      else excluded.add(v.word);
+      chip.classList.toggle('excluded');
+    };
+    grid.appendChild(chip);
+  });
+}
+
+function filterVocab(v) {
+  if (!grades.has(String(v.grade))) return false;
+  if (topic !== 'all' && v.type !== topic) return false;
+  return true;
+}
+
+function activeVocab() {
+  return allVocab.filter(v => filterVocab(v) && !excluded.has(v.word));
+}
+
+// ══════════════════════════════════════════
+// GAME LOGIC
+// ══════════════════════════════════════════
+function buildAndStart() {
+  const pool = activeVocab();
+  if (pool.length === 0) {
+    document.getElementById('gc').innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px">ไม่มีคำศัพท์ที่เลือก<br>ลองเปลี่ยนตัวกรองค่ะ</div>`;
+    return;
+  }
+  sc = 0; sw = 0; streak = 0; curIdx = 0; answered = false;
+  updateScore();
+  questions = shuffle([...pool]);
+  renderQ();
+}
+
+function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
+function renderQ() {
+  answered = false;
+  document.getElementById('fb').className = 'feedback';
+  document.getElementById('fb').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const gc = document.getElementById('gc');
+  gc.className = 'game-card';
+
+  if (curIdx >= questions.length) { showSummary(); return; }
+  const q = questions[curIdx];
+
+  gc.innerHTML = `<div class="progress-pill" id="pp">${curIdx+1} / ${questions.length}</div>
+    <div class="cat-tag" id="ct"></div>
+    <div class="q-word" id="qw"></div>
+    <div class="q-hint" id="qh"></div>
+    <div class="choices" id="choices" style="display:none"></div>
+    <div class="type-area" id="ta" style="display:none">
+      <input class="t-inp" id="ti" placeholder="พิมพ์คำตอบ..." autocomplete="off"/>
+      <button class="sub-btn" id="sb">ตรวจคำตอบ ✓</button>
+    </div>`;
+
+  if (mode === 'meaning') renderMeaning(q);
+  else if (mode === 'type') renderType(q);
+  else renderSyl(q);
+}
+
+function renderMeaning(q) {
+  document.getElementById('ct').textContent = typeLabel(q.type) + ' · ป.' + q.grade;
+  document.getElementById('qw').textContent = q.word;
+  document.getElementById('qh').textContent = '— เลือกความหมายที่ถูกต้อง —';
+
+  const pool = activeVocab().filter(v => v.word !== q.word);
+  const wrongs = shuffle(pool).slice(0, 3);
+  const opts = shuffle([q, ...wrongs]);
+
+  const cont = document.getElementById('choices');
+  cont.style.display = 'grid';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'ch';
+    b.textContent = o.meaning;
+    b.onclick = () => checkMeaning(o.word === q.word, b, q, cont.querySelectorAll('.ch'));
+    cont.appendChild(b);
+  });
+}
+
+function renderType(q) {
+  document.getElementById('ct').textContent = typeLabel(q.type) + ' · ป.' + q.grade;
+  const qw = document.getElementById('qw');
+  qw.style.fontSize = 'clamp(1rem,3.5vw,1.4rem)';
+  qw.style.color = 'var(--teal)';
+  qw.style.letterSpacing = '0.5px';
+  qw.textContent = '"' + q.meaning + '"';
+  document.getElementById('qh').textContent = '— พิมพ์คำศัพท์ที่ตรงกับความหมายนี้ —';
+
+  const ta = document.getElementById('ta');
+  ta.style.display = 'flex';
+  const ti = document.getElementById('ti');
+  ti.placeholder = 'พิมพ์คำศัพท์...';
+  const sb = document.getElementById('sb');
+  sb.onclick = () => checkType(q);
+  ti.onkeydown = e => { if (e.key==='Enter') checkType(q); };
+  setTimeout(() => ti.focus(), 80);
+}
+
+function renderSyl(q) {
+  // split word into syllables using Thai syllable heuristic
+  const syls = splitSyllables(q.word);
+  if (syls.length < 2) { curIdx++; renderQ(); return; }
+  const scrambled = shuffle([...syls]);
+
+  document.getElementById('ct').textContent = '🔤 สะกดพยางค์ · ป.' + q.grade;
+  const qw = document.getElementById('qw');
+  qw.textContent = '';
+
+  const row = document.createElement('div');
+  row.className = 'syl-row';
+  scrambled.forEach((s,i) => {
+    if (i>0) { const p=document.createElement('span'); p.className='plus'; p.textContent='+'; row.appendChild(p); }
+    const c=document.createElement('div'); c.className='syl-chip'; c.textContent=s; row.appendChild(c);
+  });
+  qw.appendChild(row);
+  document.getElementById('qh').textContent = 'เรียงพยางค์ แล้วพิมพ์คำ';
+
+  const ta = document.getElementById('ta');
+  ta.style.display = 'flex';
+  const ti = document.getElementById('ti');
+  ti.placeholder = 'พิมพ์คำ...';
+  const sb = document.getElementById('sb');
+  sb.onclick = () => checkSyl(q);
+  ti.onkeydown = e => { if (e.key==='Enter') checkSyl(q); };
+  setTimeout(() => ti.focus(), 80);
+}
+
+// Thai syllable splitter (simple)
+function splitSyllables(word) {
+  const vowelsLong = ['า','ี','ู','ื','อ','เ','แ','โ','ใ','ไ'];
+  // simple split: every 1–2 consonants + vowel cluster
+  const result = [];
+  let i = 0;
+  while (i < word.length) {
+    let chunk = '';
+    let len = Math.random() < 0.5 ? 2 : 3;
+    chunk = word.slice(i, i+len);
+    if (chunk) result.push(chunk);
+    i += len;
+  }
+  // if only 1 chunk (short word), split in half
+  if (result.length < 2 && word.length >= 4) {
+    const mid = Math.floor(word.length/2);
+    return [word.slice(0,mid), word.slice(mid)];
+  }
+  return result.filter(Boolean);
+}
+
+// ══════════════════════════════════════════
+// ANSWER CHECKS
+// ══════════════════════════════════════════
+function checkMeaning(correct, clickedBtn, q, allBtns) {
+  if (answered) return;
+  answered = true;
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.meaning) b.classList.add('reveal');
+  });
+  if (correct) { clickedBtn.classList.add('ok'); onCorrect(); }
+  else { clickedBtn.classList.add('no'); onWrong(q.meaning); }
+}
+
+function checkType(q) {
+  if (answered) return;
+  const val = document.getElementById('ti').value.trim();
+  if (!val) return;
+  answered = true;
+  document.getElementById('sb').disabled = true;
+  document.getElementById('ti').disabled = true;
+  const ok = normalize(val) === normalize(q.word);
+  document.getElementById('ti').classList.add(ok ? 'ok' : 'no');
+  if (ok) onCorrect(); else onWrong(q.word);
+}
+
+function checkSyl(q) {
+  if (answered) return;
+  const val = document.getElementById('ti').value.trim();
+  if (!val) return;
+  answered = true;
+  document.getElementById('sb').disabled = true;
+  document.getElementById('ti').disabled = true;
+  const ok = normalize(val) === normalize(q.word);
+  document.getElementById('ti').classList.add(ok ? 'ok' : 'no');
+  if (ok) onCorrect('✓ ' + q.word + ' — ' + q.meaning);
+  else onWrong(q.word + ' (' + q.meaning + ')');
+}
+
+function normalize(s) { return s.replace(/\s/g,'').trim(); }
+
+// ══════════════════════════════════════════
+// FEEDBACK
+// ══════════════════════════════════════════
+function onCorrect(msg) {
+  sc++; streak++;
+  updateScore();
+  document.getElementById('gc').classList.add('ok');
+  const fb = document.getElementById('fb');
+  fb.textContent = msg || rndOK();
+  fb.className = 'feedback ok';
+  if (streak >= 2) {
+    document.getElementById('streakNum').textContent = streak;
+    const b = document.getElementById('streakBadge');
+    b.classList.add('show');
+    clearTimeout(window._st);
+    window._st = setTimeout(() => b.classList.remove('show'), 2200);
+  }
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function onWrong(ans) {
+  sw++; streak = 0;
+  updateScore();
+  document.getElementById('gc').classList.add('no');
+  const fb = document.getElementById('fb');
+  fb.textContent = '✗ คำตอบที่ถูก: ' + ans;
+  fb.className = 'feedback no';
+  document.getElementById('streakBadge').classList.remove('show');
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQ() {
+  curIdx++;
+  const gc = document.getElementById('gc');
+  gc.style.opacity = '0'; gc.style.transform = 'translateY(6px)';
+  setTimeout(() => {
+    renderQ();
+    gc.style.transition = 'opacity 0.25s, transform 0.25s';
+    gc.style.opacity = '1'; gc.style.transform = 'translateY(0)';
+  }, 220);
+}
+
+function updateScore() {
+  document.getElementById('sC').textContent = sc;
+  document.getElementById('sW').textContent = sw;
+  document.getElementById('sT').textContent = sc+sw;
+  document.getElementById('sS').textContent = streak;
+}
+
+// ══════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════
+function showSummary() {
+  const tot = sc+sw;
+  const pct = tot>0 ? Math.round(sc/tot*100) : 0;
+  const emoji = pct>=90?'🏆':pct>=70?'⭐':pct>=50?'📚':'💪';
+  const msg = pct>=90?'เก่งมากเลย!':pct>=70?'ทำได้ดีมาก!':pct>=50?'พัฒนาขึ้นเรื่อยๆ นะ!':'ฝึกอีกหน่อยนะ ทำได้แน่!';
+  document.getElementById('gc').innerHTML = `
+    <div class="summary">
+      <div class="sum-emoji">${emoji}</div>
+      <div class="sum-title">${msg}</div>
+      <div class="sum-sub">ผลการเล่นรอบนี้</div>
+      <div class="sum-score">${sc} / ${tot}</div>
+      <div style="color:var(--muted);margin-bottom:4px">ความแม่นยำ <strong style="color:var(--gold)">${pct}%</strong></div>
+      <button class="restart-btn" onclick="buildAndStart()">เล่นอีกครั้ง 🔄</button>
+    </div>`;
+  document.getElementById('fb').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+// ══════════════════════════════════════════
+// CONTROLS
+// ══════════════════════════════════════════
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+m).classList.add('active');
+  if (allVocab.length > 0) buildAndStart();
+}
+
+function toggleGrade(btn) {
+  const g = btn.dataset.g;
+  if (grades.has(g)) { if (grades.size>1) { grades.delete(g); btn.classList.remove('active'); } }
+  else { grades.add(g); btn.classList.add('active'); }
+}
+
+function setTopic(btn) {
+  topic = btn.dataset.t;
+  document.querySelectorAll('#topicRow .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function typeLabel(t) {
+  return {vocab:'📖 คำศัพท์', poem:'📜 บทกวี', idiom:'💬 สำนวน', spell:'🔤 สะกดคำ'}[t] || t;
+}
+
+const okPhrases = ['🌟 ถูกต้อง!','✓ เก่งมาก!','🎉 ใช่เลย!','💫 ยอดเยี่ยม!','✓ ถูกแล้ว!'];
+function rndOK() { return okPhrases[Math.floor(Math.random()*okPhrases.length)]; }
+</script>
+</body>
+</html>
